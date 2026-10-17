@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+desktop.ini
+aracVeriSeti/Dataset/
+model_arac_hasar_candidate.keras

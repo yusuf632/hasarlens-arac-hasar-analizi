@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Araç fotoğrafınızı yükleyin; yapay zekâ ön veya arka bölümde hasar tahmini yapsın."
+    />
+    <title>HasarLens — Araç hasar analizi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="HasarLens ana sayfa">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 14.5 5.8 9a2 2 0 0 1 1.9-1.4h8.6A2 2 0 0 1 18.2 9l1.8 5.5v3h-2v-1.8H6V17.5H4v-3Z" />
+              <path d="M7 7.5 8.2 4h7.6L17 7.5M7 12.5h.01M17 12.5h.01M8.5 14h7" />
+            </svg>
+          </span>
+          <span>hasar<span class="brand-accent">lens</span></span>
+        </a>
+        <div class="model-badge">
+          <span class="live-dot"></span>
+          <span>YEREL YAPAY ZEKÂ</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <p class="eyebrow"><span>01</span> ARAÇ HASAR ANALİZİ</p>
+          <h1 id="page-title">Bir fotoğraf.<br /><span>Net bir ön değerlendirme.</span></h1>
+          <p class="intro-copy">
+            Aracınızın fotoğrafını bırakın. Modelimiz ön veya arka bölümdeki olası
+            hasarı saniyeler içinde sınıflandırsın.
+          </p>
+        </section>
+
+        <section class="workspace" aria-label="Fotoğraf yükleme ve analiz sonucu">
+          <div class="upload-panel panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">FOTOĞRAF GİRİŞİ</p>
+                <h2>Aracınızı ekleyin</h2>
+              </div>
+              <span class="step-index">01 / 02</span>
+            </div>
+
+            <input
+              id="image-input"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              hidden
+            />
+            <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Fotoğraf seçin veya buraya sürükleyip bırakın">
+              <div id="empty-state" class="empty-state">
+                <div class="upload-icon" aria-hidden="true">
+                  <svg viewBox="0 0 32 32" fill="none">
+                    <path d="M16 21V5m0 0-6 6m6-6 6 6M6 20v6h20v-6" />
+                  </svg>
+                </div>
+                <p class="drop-title">Fotoğrafı buraya sürükleyin</p>
+                <p class="drop-subtitle">veya <span>bilgisayarınızdan seçin</span></p>
+                <p class="file-hint">JPG, PNG veya WEBP · en fazla 10 MB</p>
+              </div>
+              <div id="preview-state" class="preview-state" hidden>
+                <img id="image-preview" alt="Analiz edilecek araç fotoğrafı önizlemesi" />
+                <button id="remove-image" class="remove-button" type="button" aria-label="Fotoğrafı kaldır">
+                  <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="m5 5 10 10M15 5 5 15" />
+                  </svg>
+                </button>
+                <div id="file-name" class="file-name"></div>
+              </div>
+            </div>
+
+            <p id="message" class="message" role="status" aria-live="polite"></p>
+            <button id="analyze-button" class="analyze-button" type="button" disabled>
+              <span class="button-label">Fotoğrafı analiz et</span>
+              <span class="button-spinner" aria-hidden="true"></span>
+              <svg class="button-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M4 10h12m-5-5 5 5-5 5" />
+              </svg>
+            </button>
+            <p class="privacy-note">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 1.5 13 3v4.2c0 3.2-2.1 5.8-5 7.3-2.9-1.5-5-4.1-5-7.3V3l5-1.5Z" />
+                <path d="m5.8 7.8 1.5 1.5 3-3" />
+              </svg>
+              Fotoğrafınız analiz için işlenir; sunucuda saklanmaz.
+            </p>
+          </div>
+
+          <div class="result-panel panel" aria-live="polite">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">ANALİZ RAPORU</p>
+                <h2>Değerlendirme</h2>
+              </div>
+              <span class="step-index">02 / 02</span>
+            </div>
+
+            <div id="result-empty" class="result-empty">
+              <div class="scan-illustration" aria-hidden="true">
+                <div class="scan-frame scan-frame-a"></div>
+                <div class="scan-frame scan-frame-b"></div>
+                <svg viewBox="0 0 112 72" fill="none">
+                  <path d="m12 48 6-17a6 6 0 0 1 5.7-4.1h64.6A6 6 0 0 1 94 31l6 17v10h-7v-6H19v6h-7V48Z" />
+                  <path d="m26 27 5-15h48l7 15M27 40h.1M85 40h.1M35 49h42" />
+                  <circle cx="27" cy="56" r="4" />
+                  <circle cx="85" cy="56" r="4" />
+                </svg>
+                <span class="scan-line"></span>
+              </div>
+              <p class="empty-result-title">Sonuç burada görünecek</p>
+              <p class="empty-result-copy">
+                Bir araç fotoğrafı ekleyip analizi başlattığınızda raporunuz hazırlanır.
+              </p>
+              <div class="result-legend">
+                <span><i class="legend-dot damage"></i>Olası hasar</span>
+                <span><i class="legend-dot clear"></i>Hasarsız</span>
+              </div>
+            </div>
+
+            <div id="result-content" class="result-content" hidden>
+              <div id="result-status" class="result-status">
+                <span id="status-indicator" class="status-indicator"></span>
+                <div>
+                  <p id="status-kicker" class="status-kicker"></p>
+                  <h3 id="status-title"></h3>
+                </div>
+              </div>
+              <div class="result-divider"></div>
+              <div class="result-details">
+                <div>
+                  <p class="detail-label">TAHMİN EDİLEN BÖLGE</p>
+                  <p id="result-region" class="detail-value"></p>
+                </div>
+                <div class="confidence-block">
+                  <div class="confidence-heading">
+                    <p class="detail-label">MODEL GÜVENİ</p>
+                    <p id="confidence-value" class="confidence-value"></p>
+                  </div>
+                  <div class="confidence-track">
+                    <span id="confidence-bar"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="result-divider"></div>
+              <div class="probabilities-heading">
+                <p class="detail-label">SINIFLANDIRMA DAĞILIMI</p>
+                <span>4 SINIF</span>
+              </div>
+              <ul id="probability-list" class="probability-list"></ul>
+              <p class="analysis-time"><span class="live-dot"></span><span id="analyzed-at"></span></p>
+              <p class="disclaimer">
+                Bu sonuç, yapay zekâ modelinin fotoğrafa dayalı tahminidir; profesyonel ekspertiz yerine geçmez.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>HASARLENS <span class="footer-separator">/</span> ARAÇ ÖN DEĞERLENDİRME</span>
+        <span>Ön ve arka bölüm · 4 sınıflı model</span>
+      </footer>
+    </div>
+  </body>
+</html>
