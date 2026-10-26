@@ -59,7 +59,7 @@ Grafik rapor aracını çalıştırmak için:
 python arabaHasarTespiti.py
 ```
 
-Varsayılan örnek görsel `OrnekResim.jpg` dosyasıdır.
+Varsayılan örnek görsel `Test13.jpg` dosyasıdır.
 
 ## Teknolojiler
 
